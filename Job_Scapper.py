@@ -24,3 +24,21 @@ def get_jobs(keyword, num_job, verbose, path, slp_time):
     driver = get(url)
     job = []
 
+    while len(jobs) < num_jobs:  #If true, should be still looking for new jobs.
+
+        #Let the page load. Change this number based on your internet speed.
+        #Or, wait until the webpage is loaded, instead of hardcoding it.
+        time.sleep(4)
+
+        #Test for the "Sign Up" prompt and get rid of it.
+        try:
+            driver.find_element_by_class_name("selected").click()
+        except ElementClickInterceptedException:
+            pass
+
+        time.sleep(.1)
+
+        try:
+            driver.find_element_by_class_name("ModalStyle__xBtn___29PT9").click()  #clicking to the X.
+        except NoSuchElementException:
+            pass
