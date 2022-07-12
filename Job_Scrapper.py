@@ -1,7 +1,5 @@
-from lib2to3.pgen2 import driver
-from matplotlib.pyplot import get
-from requests import options
 from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException
+from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
 import time
 import pandas as pd
@@ -11,17 +9,20 @@ def get_jobs(keyword, num_jobs, verbose, path, slp_time):
     #Function to scrape the data from glassdoor and convert the data into a dataframe.
 
     #Initializing the webdriver
-    options = webdriver.ChromeOptions()
+    #options = webdriver.ChromeOptions()
 
     #For scraping without open a new Chrome window every time:
     #options.add_argument('headless')
 
     #Adjust the path of chromedrive to your main directory.
-    driver = webdriver.Chrome(executable_path=path, options=options)
+    #driver = webdriver.Chrome(executable_path=path, options=options)
+    service = Service(executable_path=path)
+    driver = webdriver.Chrome(service=service)
     driver.set_window_size(1120, 1000)
-    url = "https://www.glassdoor.co.in/Job/jobs.htm?suggestCount=0&suggestChosen=false&clickSource=searchBtn&typedKeyword=&typedLocation=&locT=&locId=&jobType=&context=Jobs&sc.keyword="+keyword+"&dropdown=0"
+    url = 'https://www.glassdoor.co.in/Job/jobs.htm?suggestCount=0&suggestChosen=false&clickSource=searchBtn&typedKeyword=&typedLocation=&locT=&locId=&jobType=&context=Jobs&sc.keyword="'+keyword+'"&dropdown=0'
+    print(url)
 
-    driver = get(url)
+    driver = driver.get(url)
     jobs = []
 
     while len(jobs) < num_jobs:  #If true, should be still looking for new jobs.
@@ -35,7 +36,7 @@ def get_jobs(keyword, num_jobs, verbose, path, slp_time):
             driver.find_element_by_class_name("selected").click()
         except ElementClickInterceptedException:
             pass
-
+        
         time.sleep(.1)
 
         try:
